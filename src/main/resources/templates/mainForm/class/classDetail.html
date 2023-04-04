@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_main}">
+<head>
+<meta charset="utf-8">
+
+	<script type="text/javascript">
+	
+		$(document).ready(function(){ //페이지가 로딩이 완료 되었을 때 자동으로 호출된다
+	    	
+			//onClick 이벤트를 호출하기 위해 함수 호출
+			//수강신청 버튼 클릭
+		    $('#classOff').on('click', function(event) {
+		    	var url = "/applyList";
+		        var paramData = {
+		            classId : $("#classId").val()
+		        };
+
+		        var param = JSON.stringify(paramData);
+		        
+		        $.ajax({
+		            url      : url,
+		            type     : "POST",
+		            contentType : "application/json",
+		            data     : param,
+//		             beforeSend : function(xhr){
+		                /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+//		                 xhr.setRequestHeader(header, token);
+//		                },
+		            dataType : "json",
+		            cache   : false,
+		            success  : function(result, status){
+		            	var applyId = result;
+		            	
+		            	if (applyId > 0) {
+		                	alert("수강신청이 완료되었습니다.");
+		            		$("#classOff").css("display","none"); //표시하지않는다
+		                    $("#classOn").css("display",""); //표시한다
+		            	} else if (applyId == -777) {
+		                	alert("이미 수강신청을 하였습니다.");
+		            		$("#classOff").css("display","none"); //표시하지않는다
+		                    $("#classOn").css("display",""); //표시한다
+		            	} else if (applyId == -7) {
+		            		alert("강의신청을 하기 위해서는 로그인이 되어있어야 합니다.");
+		            		$("#classOff").css("display",""); //표시한다
+		            		$("#classOn").css("display","none"); //표시하지않는다
+		            	} else {
+		            		alert("수강신청에 실패하였습니다.");
+		                    $("#classOff").css("display",""); //표시한다
+		            		$("#classOn").css("display","none"); //표시하지않는다
+		            	}
+					},
+		            error : function(jqXHR, status, error) {
+		                $("#classOff").css("display",""); //표시한다
+		            	$("#classOn").css("display","none"); //표시하지않는다
+		            	
+		                if(jqXHR.status == '401') {
+		                    alert('로그인 후 이용해주세요');
+		                    location.href='/users/signIn';
+		                } else{
+		                    alert(jqXHR.responseText);
+		                }
+		            }
+		        });
+		    });
+		        	        
+		        //리뷰삭제
+			    
+	 			$('.btn-review-del').on('click', function(e) {
+	 				var btnDelIndex = $('.btn-review-del').index(this); //클릭한 삭제 버튼의 index 확인. start index by 0
+	 				var reviewId = $("input[name=reviewId]:eq(" + btnDelIndex + ")").val(); //화면에 표시된 review id 값 가져오기
+	 				var classId = $("#classId").val();
+	 				
+	 				$(location).attr('href', '/mainForm/review/delete/' + reviewId + '/' + classId);
+				});
+			
+			//별점 클릭
+		    $('.rate_radio').on('click', function(e) {
+ 				var chkboxIndex = $('.rate_radio').index(this); //클릭한 수정 버튼의 index 확인. start index by 0
+ 				var rate = $("input:checkbox[name=rating]:eq(" + chkboxIndex + ")").val(); //체크한 별점에 해당하는 점수 가져오기
+ 				
+ 				var maxCnt = 5;
+ 				
+ 				for (var idx=0; idx<maxCnt; idx++) {
+ 					//현재 클릭한 별점과 같거나 작은 경우
+ 					//별점은 1 부터 시작한다
+ 					//index 는 0 부터 시작한다
+ 					//예를 들어 벌점이 3 이면, index 가 0, 1, 2 가 체크 되어야 한다
+ 					if (idx < rate) {
+ 						$("input:checkbox[name=rating]:eq(" + idx + ")").prop("checked", true); //별점 체크
+ 					} else {
+ 						$("input:checkbox[name=rating]:eq(" + idx + ")").prop("checked", false); //별점 해제
+ 					}
+ 				}
+ 				
+ 				$('#rate').val(rate); //서버에 넘기기위한 별점 점수 설정
+			});
+		    
+			//등록 버튼 클릭
+		    $('#save').on('click', function(event) {
+		    	var rate = $('#rate').val(); //서버에 넘기기위한 별점 점수
+		    	
+		    	//별점 확인
+				if(rate == 0){
+					alert("별점을 선택해 주세요!");
+					return false;
+				}
+		    	
+				var review = $('.review_textarea').val();
+				var reviewLen = review.length; //리뷰 코멘트 입력 길이 
+		    	
+				//리뷰 5자 미만이면 메시지 표시
+				if(reviewLen < 5 || reviewLen > 400) {
+					alert("리뷰는 5자 이상 400자 이하로 입력해 주세요!");
+					return false;
+				}
+				
+				//리뷰 등록
+				var url = "/mainForm/detail";
+		        var paramData = {
+		        	classId : $("#classId").val(),
+		        	starPoint : $("#rate").val(),
+		        	description : $('.review_textarea').val()
+		        };
+
+		        var param = JSON.stringify(paramData);
+		        
+		        $.ajax({
+		            url      : url,
+		            type     : "POST",
+		            contentType : "application/json",
+		            data     : param,
+//		             beforeSend : function(xhr){
+		                /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+//		                 xhr.setRequestHeader(header, token);
+//		                },
+		            dataType : "json",
+		            cache   : false,
+		            success  : function(result, status){
+		            	var reviewId = result;
+		            	
+		            	if (reviewId > 0) {
+		                	alert("리뷰 등록이 완료되었습니다.");
+		            		$("#save").css("display","none"); //표시하지않는다
+		            		
+		            		var classId = $("#classId").val();
+			 				
+			 				$(location).attr('href', '/mainForm/detail/' + classId);
+		            	} else if (reviewId == -777) {
+		                	alert("이미 리뷰 등록을 하였습니다.");
+		                	$("#save").css("display","none"); //표시하지않는다
+
+		            		var classId = $("#classId").val();
+			 				
+			 				$(location).attr('href', '/mainForm/detail/' + classId);
+		            	} else if (reviewId == -7) {
+		            		alert("리뷰 등록을 하기 위해서는 로그인이 되어있어야 합니다.");
+		            		$("#save").css("display",""); //표시한다
+		            	} else if (reviewId == -9) {
+		            		alert("리뷰 등록을 하기 위해서는 수강신청이 되어있어야 합니다.");
+		            		$("#save").css("display",""); //표시한다
+		            	} else {
+		            		alert("리뷰 등록에 실패하였습니다.");
+		                    $("#save").css("display",""); //표시한다
+		            	}
+					},
+		            error : function(jqXHR, status, error){
+		            	 $("#save").css("display",""); //표시한다
+		            	
+		                if(jqXHR.status == '401') {
+		                    alert('로그인 후 이용해주세요');
+		                    location.href='/users/signIn';
+		                } else {
+		                    alert(jqXHR.responseText);
+		                }
+		            }
+		        });
+		    });
+		    
+		 	//onKeyup 이벤트를 호출하기 위해 함수 호출
+		 	//리뷰 입력
+		    $('.review_textarea').on('keyup', function(event) {
+				var review = $(this).val();
+				var reviewLen = review.length; //리뷰 코멘트 입력 길이 
+				var limitLen = 400; //제한길이
+				
+				//제한길이보다 입력한 내용이 큰 경우
+				if(reviewLen > limitLen) {
+					$(this).val( review.substr(0,limitLen) ); //제한길이에 맞춰서 입력내용을 자른다
+				}
+				
+				$('#rate_count').text(review.length + "/" + limitLen); //현재 입력한 길이 표시
+		    });
+		 	
+			const defaultHeight = $('#tab-content1').outerHeight();
+			const ulHeight = $('.tabs').outerHeight();
+			$('.tabs').css('height', (ulHeight + defaultHeight) + "px");
+			
+			$('.tabs li > label').on('click', function () {
+				let h = $(this).siblings('div.tab-content').outerHeight();
+				$('.tabs').css('height', (ulHeight + h) + "px");
+			})
+		});
+		
+		
+			   
+	</script>
+
+<style>
+.page-header {
+	background: url("/main/img/main-banner.jpg");
+	background-color: white !important;
+	background-size : contain;
+	height: 400px;
+	background-position: center;
+    margin-bottom: 0 !important;
+}
+
+.bstyle .btn {
+	width: 300px;
+	height: 80px;
+	font-size: 2rem;
+}
+
+/* 레이아웃 외곽 너비 400px 제한, 리뷰 */
+.wrap{
+    max-width: 600px;
+    margin: 0 auto; /* 화면 가운데로 */
+    background-color: #fff;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+
+}
+.reviewform textarea{
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.rating .rate_radio {
+    position: relative;
+    display: inline-block;
+    z-index: 20;
+    opacity: 0.001;
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    cursor: pointer;
+    vertical-align: top;
+    display: none;
+}
+
+.rating .rate_radio + label {
+    position: relative;
+    display: inline-block;
+    margin-left: -4px;
+    z-index: 10;
+    width: 60px;
+    height: 60px;
+    background-image: url('/img/icons/star.png');
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+}
+
+.rating .rate_radio:checked + label {
+    background-color: #FFFF00;
+}
+
+.rating2 {
+	width: 130px;
+    height: 30px;
+}
+
+.rating2 .icon_star {
+    position: relative;
+    display: inline-block;
+    z-index: 20;
+    opacity: 0.001;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    vertical-align: top;
+    display: none;
+}
+.rating2 .icon_star + label {
+    position: relative;
+    display: inline-block;
+    margin-left: -4px;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+    background-image: url('/img/icons/star.png');
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+    cursor: pointer;
+    background-color: #ff8;
+}
+
+.rating .input:hover { 
+	background: none;
+}
+
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+
+.course__comment li {
+  list-style: none;
+}
+
+.course__comment-box {
+  background: #FBEBD4;
+  width: 460px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 20px 10px 2px 20px;
+  margin: 0;
+}
+
+.course__comment-rating .fa:before {
+	color: #FFD700 !important;
+	font-size: 20px;
+}
+
+.course__comment-info h4 {
+  font-size: 16px;
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+.course__comment-info {
+  margin-bottom: 15px;
+}
+
+.course__comment-text {
+	padding-top: 45px;
+	text-indent: -120px !important;
+	word-wrap: break-word !important;
+}
+
+.course__comment-rating label {
+	background: inherit !important;
+	color: black !important;
+	padding: 0 !important;
+	display: inline-block !important;
+	position: relative !important;
+
+}
+
+</style>
+
+<title>참스터디 - 강의</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+   <!-- Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 page-header">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+                
+        <input type="hidden" id="classId" th:value="${adminClassDto.id}">
+				
+				
+				<!-- 제목 -->
+				<div class="row g-5 justify-content-center">
+				<div class="col-md-4" style="padding-top: 50px;">
+					<h3 class="pb-4 mb-4 fst-italic border-bottom" style="color: #642F05">
+						✍️ 참스터디에서 배워요!
+					</h3>
+				</div>
+				</div>
+					
+					<!-- 강의 이미지 -->
+					<div class="row g-5 justify-content-center">
+					<div class="col-md-4" style="display: flex; gap:100px">
+						<div style="line-height: 0; margin: 0.5rem -1.5rem 0.5rem 50px; flex-basis: 18rem;">
+							<span style="color: #495057;">
+								<img src="/img/photos/classD.jpg" class="img-fluid rounded-start" alt="이미지" style="border-radius: 0.3rem; margin:0.5rem 1rem 1rem 0; background-size:cover;">
+							</span>
+						</div>
+						 <div style="margin: 1.5rem 0 1.5rem 1rem; flex-basis: 25rem;">
+						 	<span style="color: #495057;">						 		
+						 		<span style="color: #495057;" class="infd-icon">
+									<svg width="16" height="16" viewBox="0 0 16 16">
+									<path fill="#00C471" fill-rule="evenodd" d="M13.78 4.22c.14.14.22.331.22.53s-.08.39-.22.53l-7.25 7.25c-.14.14-.331.22-.53.22s-.39-.08-.53-.22L2.22 9.28c-.133-.142-.205-.33-.201-.525.003-.194.082-.38.22-.517.137-.137.322-.216.516-.22.195-.003.383.07.525.202L6 10.94l6.72-6.72c.14-.14.331-.22.53-.22s.39.08.53.22z" clip-rule="evenodd"></path>
+									</svg>
+									수강료가 부담되시는 분!
+						 		</span>
+								<br>
+						 		<span style="color: #495057;" class="infd-icon">
+									<svg width="16" height="16" viewBox="0 0 16 16">
+									<path fill="#00C471" fill-rule="evenodd" d="M13.78 4.22c.14.14.22.331.22.53s-.08.39-.22.53l-7.25 7.25c-.14.14-.331.22-.53.22s-.39-.08-.53-.22L2.22 9.28c-.133-.142-.205-.33-.201-.525.003-.194.082-.38.22-.517.137-.137.322-.216.516-.22.195-.003.383.07.525.202L6 10.94l6.72-6.72c.14-.14.331-.22.53-.22s.39.08.53.22z" clip-rule="evenodd"></path>
+									</svg>
+									무언가를 배우고 싶은 신 분!
+						 		</span>
+						 		<br>
+						 		<strong style="font-size: 2.3rem; color: #642F05;">지금 바로 신청하세요!</strong>
+						 		<br>
+						 		<br>
+						 		<!-- 신청버튼 -->
+									<div class="col-md-4 bstyle" style="margin-top: 0;">
+		                   			<input type="button" class="btn btn-primary btn-lg" id="classOff" th:style="${isApplyListNew == 'Y' ? 'display: block;' : 'display: none;'}" value="수강신청">
+		                   			<input type="button" class="btn btn-primary btn-lg" id="classOn" th:style="${isApplyListNew != 'Y' ? 'display: block;' : 'display: none;'}" value="신청완료">
+		                			</div>
+								<!-- 신청버튼 --> 		
+						 	</span>				 	
+						 </div>			
+					</div>
+					</div>
+					<br>
+
+					
+				<!-- 리뷰 -->
+			    <div id="review" role="tabpanel" aria-labelledby="review-tab">
+				<div class="wrap">
+	                <!-- 코멘트 -->
+	                <form id="delFrm" action="/mainForm/detail/{reviewId}">
+	                	<input type="hidden" name="_method" value="delete"/>
+	                <div class="course__comment mb-75">
+	                   <h3 style="color: #642F05">[[${#lists.size(classReviewList)}]] Comments</h3>
+	
+	                 <th:block th:each="class_review, stat: ${classReviewList}">
+	                 	<div class="cmd mx-5" style="text-align:right; padding:0 30px 10px 0;">
+	               			<input type="hidden" name="reviewId" th:value="${class_review.id}" />
+							<input type="button" class="btn btn-primary btn-sm btn-review-del" value="삭제" />
+			        	</div>							
+	                   <ul class="justify-content-center">
+	                      <li>
+	                         <div class="course__comment-box">
+	                            <div class="course__comment-content">
+	                               <div class="course__comment-wrapper ml-70 fix">
+	                                  <div class="course__comment-info float-start">
+	                                     <h4>[[${class_review.userName}]]</h4>
+	                                     <span>[[${class_review.regDate}]]</span>
+	                                  </div>                            
+	                                  <div class="course__comment-rating float-start float-sm-end">
+	                                <small class="fa fa-star text-primary"></small>
+	                                <small class="fa fa-star text-primary"></small>
+	                                <small class="fa fa-star text-primary"></small>
+	                                <small class="fa fa-star text-primary"></small>
+	                                <small class="fa fa-star text-primary"></small>
+					            	<label>([[${class_review.starPoint}]])</label>
+	                                  </div>
+	                               </div>
+	                               <div class="course__comment-text">
+	                                  <p>[[${class_review.description}]]</p>
+	                            	</div>
+	                         	</div>
+	                         </div>
+	                      </li>
+	                   </ul>                   
+	                   </th:block>
+	                </div> 
+	           	</form>
+	           	<!-- 코멘트 -->
+	           	
+	                	<!-- 후기 작성 -->
+				    <h3 style="font-size: 30px; padding-top: 20px; color: #642F05;">후기</h3>
+				    <form name="reviewform" class="reviewform" method="post" action="/save">
+				        <input type="hidden" name="rate" id="rate" value="0"/>
+				        <p class="title_star text-center" style="color: #642F05">별점과 리뷰를 남겨주세요.</p>
+				 
+				        <div class="review_rating">
+				            <div class="rating text-center">
+				                <!-- 해당 별점을 클릭하면 해당 별과 그 왼쪽의 모든 별의 체크박스에 checked 적용 -->
+				                <input type="checkbox" name="rating" id="rating1" value="1" class="rate_radio" title="1점">
+				                <label for="rating1"></label>
+				                <input type="checkbox" name="rating" id="rating2" value="2" class="rate_radio" title="2점">
+				                <label for="rating2"></label>
+				                <input type="checkbox" name="rating" id="rating3" value="3" class="rate_radio" title="3점" >
+				                <label for="rating3"></label>
+				                <input type="checkbox" name="rating" id="rating4" value="4" class="rate_radio" title="4점">
+				                <label for="rating4"></label>
+				                <input type="checkbox" name="rating" id="rating5" value="5" class="rate_radio" title="5점">
+				                <label for="rating5"></label>
+				            </div>
+				        </div>
+				        <div style="padding-left: 60px;">
+				        	<label id="rate_count" style="background: none; color: black;">0/400</label>
+				        </div>
+				        <div class="review_contents text-center">
+				            <textarea rows="10" class="review_textarea" style="width:460px;" name="description" placeholder="5자 이상 400자 이하로 작성해 주세요."></textarea>
+				        </div>   
+				        <div class="cmd mx-5" style="text-align:right;">
+				        	<input type="button" class="btn btn-primary btn-lg" id="save" value="등록">
+				        </div>
+				    </form>
+				    <!-- 후기 작성 -->	
+				    </div>
+				    </div>
+				
+</body>
+</html>

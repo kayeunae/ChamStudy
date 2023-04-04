@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_main}">
+<head>
+<meta charset="utf-8">
+<title>참스터디 - 고객센터</title>
+<script>
+	$(function(){
+		$('.category').each(function(){
+			if($(this).text()=='all'){$(this).text('전체')}
+			if($(this).text()=='S'){$(this).text('사이트 이용')}
+			if($(this).text()=='V'){$(this).text('동영상')}
+			if($(this).text()=='M'){$(this).text('모바일')}
+			if($(this).text()=='F'){$(this).text('증빙서류')}
+			if($(this).text()=='U'){$(this).text('회원정보')}
+			if($(this).text()=='E'){$(this).text('기타')}
+		})
+	})
+	
+	function selsub(sub){
+		location.href="/cs/faq/"+ "?searchCategory=" + sub
+        + "&searchQuery=";
+	}
+
+</script>
+<link href="/main/css/cs_style.css" rel="stylesheet">
+<link href="/main/css/swiper.css" rel="stylesheet">
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- Header Start -->
+		<div>
+			<div class="banner-size cs-main" onClick="location.href='/cs/index'"> 
+<!-- 			<img class="banner-size" src="/main/img/cs-banner.jpg" alt="banner">  -->
+				<!-- <div class="container py-5">
+					<div class="row justify-content-center">
+						<div class="col-lg-10 text-center">
+							<h1 class="display-3 text-white main-title" onClick="location.href='/cs/index'">고객센터</h1>
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb justify-content-center">
+									<li class="breadcrumb-item"><a class="small-title" onClick="location.href='/cs/inform'">공지사항</a></li>
+									<li class="breadcrumb-item"><a class="small-title" onClick="location.href='/cs/faq'">자주 묻는 질문</a></li>
+									<li class="breadcrumb-item"><a class="small-title" onClick="location.href='/cs/qna'">1:1 문의</a></li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<!-- Header End -->
+¿
+		<!-- Service Start -->
+		<div class="container-xxl py-5">
+			<div class="container">
+				<div class="row g-4">
+					<div class="col-lg-4 col-sm-6 text-white wow category__card">
+						<div class="service-item text-center pt-3">
+							<div class="p-4" onClick="location.href='/cs/inform'">
+								<i class="fa fa-3x fa-graduation-cap text-white mb-4"></i>
+								<h5 class="mb-3">공지사항</h5>
+								<p class="text-white">참스터디의 업데이트 정보 등 <br /> 다양한 소식을 알려드립니다.</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4 col-sm-6 text-white wow category__card">
+						<div class="service-item text-center pt-3">
+							<div class="p-4" onClick="location.href='/cs/faq'">
+								<i class="fa fa-3x fa-globe text-white mb-4"></i>
+								<h5 class="mb-3">자주 묻는 질문</h5>
+								<p>자주 물어보는 질문과 <br /> 그에 대한 답변을 확인하실 수 있습니다.</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4 col-sm-6 text-white wow category__card">
+						<div class="service-item text-center pt-3">
+							<div class="p-4" onClick="location.href='/cs/qna'">
+								<i class="fa fa-3x fa-home text-white mb-4"></i>
+								<h5 class="mb-3">1:1 문의</h5>
+								<p>자주 묻는 질문을 통해 원하시는 답을 <br /> 찾지 못하셨다면 1:1문의를 이용해 주세요.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Service End -->
+		
+		<!-- 공지사항 Start -->
+		<div class="container-xxl py-3 mt-5">
+			<div class="container">
+				<div class="text-center wow ">
+					<h6 class="section-title bg-white text-center text-primary px-3">announcement</h6>
+					<h1 class="mb-3">공지사항</h1>
+				</div>
+			</div>
+		</div>
+		<div class="row justify-content-center margin-minus">
+			<div class="list list-default col-10">
+			<button type="button" class="btn btn-primary goInform" onClick="location.href='/cs/inform'">더 보기</button>
+				<ul class="none text-center">
+					<li class="list-item fixed">
+						<div class="list__num list_tab" aria-label="글 번호">
+		                    <span class="icon icon--notice">No.</span>
+		                </div>
+	                    <div class="list__subject" aria-label="제목">
+	                        <span class="list__title">제목</span>
+	                    </div>
+	                    <div class="list__read list_tab" aria-label="조회수">조회수</div>
+	                    <div class="list__date list_tab" aria-label="등록일">등록일</div>
+					</li>
+					<th:block th:each="inform, status : ${mainInformList}">
+						<li class="list-item list-content" th:onclick="|location.href='@{/cs/inform/}${inform.id}'|">
+	                        <div class="list__num" aria-label="글 번호">
+	                            <span class="icon icon--notice">[[${inform.getId}]]</span>
+	                        </div>
+	                        <div class="list__subject" aria-label="제목">
+	                            <span class="list__title">[[${inform.getTitle}]]</span>
+	                        </div>
+	                        <div class="list__read" aria-label="조회수">[[${inform.getViewCount}]]</div>
+	                        <div class="list__date" aria-label="등록일">[[${inform.getRegDate.substring(0,13)}]]</div>
+						</li>
+					</th:block>
+				</ul>
+			</div>
+		</div>
+		<!-- 공지사항 End -->
+		
+		
+		<!-- 자주묻는질문 Start -->
+		<div class="container-xxl py-3">
+			<div class="container">
+				<div class="text-center wow">
+					<h6 class="section-title bg-white text-center text-primary px-3"f->faq</h6>
+					<h1 class="mb-3">자주 묻는 질문</h1>
+				</div>
+			</div>
+		</div>
+		<div class="d-flex pb-5 justify-content-center sub-category text-center">
+		    <div class="swiper-slideA ms-4 me-4 sub py-3 wow" onclick="selsub('all')">
+		    	<i class="fa-solid fa-asterisk"></i><h5 class="text-center category">all</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('S')">
+		    	<i class="fa-solid fa-display"></i><h5 class="text-center category">S</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('V')">
+		    	<i class="fa-solid fa-video"></i><h5 class="text-center category">V</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('M')">
+		    	<i class="fa-solid fa-mobile-screen-button"></i><h5 class="text-center category">M</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('F')">
+		    	<i class="fa-solid fa-graduation-cap"></i><h5 class="text-center category">F</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('U')">
+		    	<i class="fa-solid fa-user"></i><h5 class="text-center category">U</h5>
+		    </div>
+		    <div class="swiper-slideA ms-4 me-4 sub py-3" onclick="selsub('E')">
+		    	<i class="fa-solid fa-hashtag"></i><h5 class="text-center category">E</h5>
+		    </div>
+		</div>
+		<!-- 자주묻는질문 End -->
+
+
+
+	</div>
+</body>
+</html>

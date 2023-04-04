@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_main}">
+<head>
+<meta charset="utf-8">
+<title>참스터디</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="/main/css/swiper.css" rel="stylesheet">
+
+<style>
+
+</style>
+<script>
+function selsub(sub){
+	//location.href="/mainForm/class" + "?searchQuery=" + sub;
+	$('#hiddenQuery').val(sub); //서브카테고리 파라미터 설정
+	
+	searchClassList(0); //강의리스트 검색
+}
+
+/**
+ * 강의리스트 검색
+ */
+function searchClassList(page) {
+	var frmObj = $('#frmSearch');
+// 	frmObj.attr('method', 'post');
+// 	frmObj.attr('action','/mainForm/class');
+	
+	if (typeof page != 'undefined' && page != null) {
+		$('#hiddenPage').val(page); //검색할 페이지 설정
+	} else {
+		$('#hiddenPage').val(0); //검색할 페이지 설정 (첫 페이지)
+	}
+	
+	frmObj.submit();
+}
+
+</script>
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- Spinner Start -->
+		<div id="spinner"
+			class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+			<div class="spinner-border text-primary"
+				style="width: 3rem; height: 3rem;" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+		<!-- Spinner End -->
+		
+	<!-- Header Start -->
+	<div class="">
+		<img src="/img/photos/main-banner.jpg" style="object-fit: cover; height: 400px; width: 100%">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center"></div>
+        </div>
+    </div>
+    <!-- Header End -->
+		
+
+
+		<!-- 검색창 -->
+		<form id="frmSearch" class="d-flex" action="/mainForm/class" role="search" method="post">
+		<div class="container-xxl py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-8 d-flex justify-content-center">
+					<h3>배우고, 나누고, 성장하세요</h3>
+				</div>
+				<input type="hidden" id="hiddenQuery" name="searchQuery" th:value="${userSearchDto.searchQuery}">
+				<input type="hidden" id="hiddenPage" name="page" value="">
+				<div class="col-md-8 d-flex justify-content-center">
+					<input id="inputSearch" class="form-control border-1 py-3 ps-4 pe-5" type="search"
+						placeholder="검색어 입력" aria-label="Search" name="searchText" th:value="${userSearchDto.searchText}">
+					<button class="btn btn-primary customBtn">
+		            <span class="icon"><i class="fas fa-search" id="btnSearch"></i></span>
+		          </button>
+				</div>
+			</div>
+		</div>
+		</form>
+
+
+
+		<!-- Service Start -->
+
+		<div class="container-xxl py-5" style="margin-top: -80px;">
+			<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+				<h6 class="section-title bg-white text-center text-primary px-3">Categories</h6>
+				<h1 class="mb-5">Courses Categories</h1>
+			</div>
+		<div class="container-xxl py-5" style="margin-top: -70px;">
+        <div class="container">
+            <div class="row g-12">
+			   <div class="swiper mySwiperA">
+			    <div class="swiper-wrapper">
+			    	<div class="swiper-slide swiper-slideA pointer"><img alt="" src="/img/icons/work-skills.png"><h5  class="text-center">전체</h5></div>
+			    <th:block th:each="subList : ${subLists}">
+			    	<div class="swiper-slide swiper-slideA pointer" th:onclick="selsub([[${subList.name}]])"><img alt="" th:src="${subList.imgUrl}"><h5 class="text-center">[[${subList.name}]]</h5></div>
+			    </th:block>
+			      
+			    </div>
+			    <div class="swiper-paginationA"></div>
+			    <div class="swiper-button-next"></div>
+    			<div class="swiper-button-prev"></div>
+			  </div>
+                
+            </div>
+        </div>
+    </div>
+		</div>
+		<!-- Service End -->
+
+
+
+		<!-- Categories Start -->
+		<!-- swiper -->
+		<div class="container-xxl py-5 category" style="margin-top: -100px;">
+			<div class="container">
+				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+					<h6 class="section-title bg-white text-center text-primary px-3">신규 강의</h6>
+					<h1 class="mb-5">Courses free video</h1>
+				</div>
+				<div class="row g-3">
+					<!-- 슬라이더 -->
+					<div class="swiper mySwiper">
+						
+						<div class="swiper-wrapper" th:if="${not #lists.isEmpty(mainFormDtoList)}">
+						<th:block th:each="mainFormDto, status : ${mainFormDtoList}">
+							<div class="swiper-slide">
+							<a class="swiper-a" th:href="@{/mainForm/detail/{classId}(classId=${mainFormDto.getid})}">
+							<div class="swiper-img"><img th:src="${mainFormDto.getimgurl()}"></div>
+							<div class="title">[[${mainFormDto.getclassname()}]]</div>
+							<div class="name">[[${mainFormDto.getsubname()}]]</div>
+							<div class ="stars d-flex">
+							<div class="ratings" >
+							    <div class="empty-stars"></div>
+							    <div class="full-stars" th:style="'width:'+${(mainFormDto.getstarpoint()*20)}+'%'"></div>
+							</div>
+							<div style="text-align: right; margin-left: 40px;">[[${mainFormDto.getstarpoint()}]]/ 5.0</div>
+							</div>
+							</a>
+							</div>
+						</th:block>
+						</div>
+						
+						    <div class="swiper-button-next"></div>
+    						<div class="swiper-button-prev"></div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- swiper -->
+		<div class="container-xxl py-5 category" style="margin-top: -80px;">
+			<div class="container">
+				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+					<h6 class="section-title bg-white text-center text-primary px-3">인기 강의</h6>
+					<h1 class="mb-5">Courses video</h1>
+				</div>
+				<div class="row g-3">
+					<!-- 슬라이더 -->
+					<div class="swiper mySwiper">
+						<div class="swiper-wrapper">
+						
+						<th:block th:each="mainFormDtoStar, status : ${mainFormDtoStarList}">
+							<div class="swiper-slide">
+							<a class="swiper-a" th:href="@{/mainForm/detail/{classId}(classId=${mainFormDtoStar.getid()})}">
+							<div class="swiper-img"><img th:src="${mainFormDtoStar.getimgurl()}"></div>
+							<div class="title">[[${mainFormDtoStar.getclassname}]]</div>
+							<div class="name">[[${mainFormDtoStar.getsubname}]]</div>
+
+							<div class ="stars d-flex">
+							<div class="ratings" >
+							    <div class="empty-stars"></div>
+							    <div class="full-stars" th:style="'width:'+${(mainFormDtoStar.getstarpoint()*20)}+'%'"></div>
+							</div>
+							<div style="text-align: right; margin-left: 40px;">[[${mainFormDtoStar.getstarpoint}]]/ 5.0</div>
+							</div>
+							</a>
+							</div>
+						</th:block>
+
+						</div>
+						    <div class="swiper-button-next"></div>
+    						<div class="swiper-button-prev"></div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px; visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
+			         <div class="content_left">
+			          <h1 class="title is-2">
+			            <span id="count_user" style="color: #642F05">[[${countMember}]]</span>명이 <br>참스터디와 함께합니다.
+			          </h1>
+			          <div class="text is-1">
+						   참스터디는 강의의 수강생수, 평점을 투명하게 공개합니다.<br>
+						   실제로 많은 온오프라인 학원들은 단기적 성과를 높이기 위해 잘나온 특정 후기만 노출 하거나, 아예 숨겨버리는 경우가 많습니다.<br>
+						   반면 참스터디는 강의에 대한 후기, 학생수 등 정보를 투명하게 공개합니다. 신뢰성을 바탕으로 학습자들이 더 좋은 컨텐츠를 선택하고 교육의 질을 높입니다.
+			          </div>
+			          <div class="buttons">
+			            <a class="button space-inset-stretch-5" href="/request-to-inflearn"></a>
+			          </div>
+			        </div>
+                </div>
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                
+				   <div class="swiper mySwiperB">
+				    <div class="swiper-wrapper swiper-wrapperB">
+				     
+				     <th:block th:each="mainReviewDto, status : ${mainReviewDtoList}">
+				      <div class="swiper-slide swiper-slideB" style="display: block;"><a href="#"><p class="studentName" st>[[${mainReviewDto.getusername}]](수강생)</p><h4 class="className">강의 명 : [[${mainReviewDto.getclassname}]]</h4><h6 class="review">[[${mainReviewDto.getdescription}]]<h6></a></div>
+					</th:block>
+				      
+				    <div class="swiper-pagination"></div>
+				  </div>
+				  
+                </div>
+            </div>
+        </div>
+
+			<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>		
+		<script>
+			var swiper = new Swiper(".mySwiper", {
+				slidesPerView : 5,
+				spaceBetween : 10,
+				grabCursor : true,
+				
+		        navigation: {   // 버튼
+		            nextEl: ".swiper-button-next",
+		            prevEl: ".swiper-button-prev",
+		          },
+
+			});
+			
+		    var swiperA = new Swiper(".mySwiperA", {
+		    	slidesPerView : 12,
+				spaceBetween : 10,
+				grabCursor : true,
+				
+		        navigation: {   // 버튼
+		            nextEl: ".swiper-button-next",
+		            prevEl: ".swiper-button-prev",
+		          },
+		      });
+		    
+		    var swiper = new Swiper(".mySwiperB", {
+		        direction: "vertical",
+		        slidesPerView: 2,
+		        spaceBetween: 30,
+		        mousewheel: true,
+		        speed : 1000,
+		        centeredSlides: true,    //센터모드		        
+		        autoplay: {     //자동슬라이드 (false-비활성화)
+		            delay: 2000, // 시간 설정
+		            disableOnInteraction: false, // false-스와이프 후 자동 재생
+		          },
+		          loop : true,   // 슬라이드 반복 여부
+		          loopAdditionalSlides : 1
+		      });
+		    
+
+			
+			
+		</script>
+	</div>
+</body>
+</html>

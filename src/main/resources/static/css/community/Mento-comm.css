@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+ul.pagination {
+    justify-content: center;
+        margin-top: 100px;
+    
+}
+
+body {
+    background-color: #f6f6f6;
+}
+
+.mento-header {
+    background-color: #ab6e3ecf ;
+    height: 150px;
+}
+
+button#mento-write-btn {
+    margin-left: 20px;
+}
+
+h2.mento-header1 {
+    font-size: 1.9rem;
+}
+
+.header-font-wrap {
+    margin-left: 12vw;
+    padding-top: 17px;
+}
+
+.search-wrap {
+    display: flex;
+    margin-top: 25px;
+    margin-left: 40vw;
+}
+
+button#searchBtn {
+    border-radius: 0px 5px 5px 0px / 0px 5px 5px 0px;
+    border: none;
+}
+
+div.dataTables_paginate ul.pagination {
+    justify-content: center;
+    margin: 2px 0;
+    white-space: nowrap;
+    margin-top: 50px;
+}
+
+.page-header1 {
+    background: url(/img/photos/community-2.png);
+    background-size: cover;
+    height: 400px;
+    background-position: 0 -800px;
+}
+
+.boards {
+    margin-left: 10%;
+    margin-right: 10%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-gap: 15px;
+}
+
+input#searchQuery {
+    margin-left: 10px;
+    border: solid 1px gainsboro;
+    border-radius: 5px 0px 0px 5px / 5px 0px 0px 5px;
+}
+
+.each {
+    width: 195px;
+    height: 155px;
+    background-color: #ffffff;
+    margin-top: 15px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.comm-wrap:hover {
+	cursor: pointer;
+}
+
+
+.comm-li2-1 {
+    margin-left: 10px;
+    padding-top: 10px;
+}
+
+.comm-li2-2 {
+    margin-left: 10px;
+    padding-bottom: 10px;
+}
+
+a.comm-wrap-a3 {
+    margin-left: 10px;
+}
+
+.comm-li1 {
+    padding-top: 10px;
+    padding-left: 10px;
+    
+}
+
+.comm-wrap {
+    height: 208px;
+}
+
+.comm-li3 {
+    position: absolute;
+    bottom: 10px;
+}
+

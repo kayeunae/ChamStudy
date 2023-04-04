@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_admin}">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="/js/mainPage.js"></script>
+	<script>
+		function LocClassList(classId){
+			location.href= '/adminApply/sublist/'+classId;
+		}
+	
+	</script>
+	<title>참스터디</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<main class="content">
+			<div class="container-fluid p-0">
+				<h1 class="h3 mb-3"><strong>참스터디 관리자 페이지</strong></h1>
+				<div class="row">
+					<div class="col-xl-6 col-xxl-5 d-flex">
+						<div class="w-100">
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col mt-0">
+													<h5 class="card-title">전체 회원</h5>
+												</div>
+
+												<div class="col-auto">
+													<div class="stat">
+														<i class="fa-solid fa-users"></i>
+													</div>
+												</div>
+											</div>
+											<h1 class="mt-1 mb-3">[[${countMember}]]명</h1>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col mt-0">
+													<h5 class="card-title">홈페이지 방문수</h5>
+												</div>
+
+												<div class="col-auto">
+													<div class="stat">
+														<i class="fa-solid fa-house-user"></i>
+													</div>
+												</div>
+											</div>
+											<h1 class="mt-1 mb-3">[[${countVisitor}]]</h1>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col mt-0">
+													<h5 class="card-title">과정 수</h5>
+												</div>
+
+												<div class="col-auto">
+													<div class="stat">
+														<i class="fa-solid fa-chalkboard-user"></i>
+													</div>
+												</div>
+											</div>
+											<h1 class="mt-1 mb-3">[[${countClass}]]개</h1>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col mt-0">
+													<h5 class="card-title">수강신청자</h5>
+												</div>
+
+												<div class="col-auto">
+													<div class="stat">
+														<i class="fa-solid fa-book-open-reader"></i>
+													</div>
+												</div>
+											</div>
+											<h1 class="mt-1 mb-3">[[${countApply}]]명</h1>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-6 col-xxl-7 d-flex">
+						<div class="card flex-fill">
+							<div class="card-header">
+
+								<h5 class="card-title mb-0 d-inline-block">교육 진행정보</h5>
+								<span class="btn btn-secondary mBtn"><a href="/adminApply/list">전체보기</a></span>
+							</div>
+							<table class="table table-hover my-0 text-center">
+								<colgroup>
+									<col width="15%">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>구분</th>
+										<th>과정명</th>
+										<th>전체 진도율</th>
+										<th>전체 수료율</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="eduList : ${eduInfo}">
+									<tr class="pointer" th:onclick="LocClassList([[${eduList.getId()}]])">
+										<td><span class="badge bg-secondary w-75">[[${eduList.getSubname()}]]</span></td>
+										<td>[[${eduList.getClassName()}]]</td>
+										<td class="d-none d-xl-table-cell">[[${eduList.getProgressRate()}]]%</td>
+										<td class="d-none d-xl-table-cell">[[${eduList.getCompletionRate()}]]%</td>
+									</tr>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<input type="hidden" id="mCateNum" th:value="${countChartMain.size()}">
+					<input type="hidden" id="s1CateNum" th:value="${countChartSubIt.size()}">
+					<input type="hidden" id="s2CateNum" th:value="${countChartSubCe.size()}">
+					<input type="hidden" id="s3CateNum" th:value="${countChartSubLa.size()}">
+					<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-0">메인 카테고리별 신청현황</h5>
+							</div>
+							<div th:if="${countChartMain.size()==0}" class="nochart">등록된 자료가 없습니다.</div>
+							<div th:if="${countChartMain.size()>0}" class="card-body">
+								<div class="align-self-center w-100">
+									<div class="py-3">
+										<div class="chart chart-xs">
+											<canvas id="chartjs-dashboard-pie1"></canvas>
+										</div>
+									</div>
+									<table class="table mb-0">
+										<tbody>
+											<th:block th:each="charMain : ${countChartMain}">
+												<tr>
+													<td th:id="'mCateName'+${charMainStat.count}">[[${charMain.getName()}]]</td>
+													<td th:id="'mCateCount'+${charMainStat.count}" class="text-end">[[${charMain.getCount()}]]</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-0">IT별 신청현황</h5>
+							</div>
+							<div th:if="${countChartSubIt.size()==0}" class="nochart">등록된 자료가 없습니다.</div>
+							<div th:if="${countChartSubIt.size()>0}" class="card-body">
+								<div class="align-self-center w-100">
+									<div class="py-3">
+										<div class="chart chart-xs">
+											<canvas id="chartjs-dashboard-pie2"></canvas>
+										</div>
+									</div>
+									<table class="table mb-0">
+										<tbody>
+											<th:block th:each="charSub : ${countChartSubIt}">
+												<tr>
+													<td th:id="'s1CateName'+${charSubStat.count}">[[${charSub.getName()}]]</td>
+													<td th:id="'s1CateCount'+${charSubStat.count}" class="text-end">[[${charSub.getCount()}]]</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-0">자격증별 신청현황</h5>
+							</div>
+							<div th:if="${countChartSubCe.size()==0}" class="nochart">등록된 자료가 없습니다.</div> 
+							<div th:if="${countChartSubCe.size()>0}" class="card-body">
+								<div class="align-self-center w-100">
+									<div class="py-3">
+										<div class="chart chart-xs">
+											<canvas id="chartjs-dashboard-pie3"></canvas>
+										</div>
+									</div>
+									<table class="table mb-0">
+										<tbody>
+											<th:block th:each="charSub : ${countChartSubCe}">
+												<tr>
+													<td th:id="'s2CateName'+${charSubStat.count}">[[${charSub.getName()}]]</td>
+													<td th:id="'s2CateCount'+${charSubStat.count}" class="text-end">[[${charSub.getCount()}]]</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-0">어학별 신청현황</h5>
+							</div>
+							<div th:if="${countChartSubLa.size()==0}" class="nochart">등록된 자료가 없습니다.</div> 
+							<div th:if="${countChartSubLa.size()>0}" class="card-body">
+								<div class="align-self-center w-100">
+									<div class="py-3">
+										<div class="chart chart-xs">
+											<canvas id="chartjs-dashboard-pie4"></canvas>
+										</div>
+									</div>
+									<table class="table mb-0">
+										<tbody>
+											<th:block th:each="charSub : ${countChartSubLa}">
+												<tr>
+													<td th:id="'s3CateName'+${charSubStat.count}">[[${charSub.getName()}]]</td>
+													<td th:id="'s3CateCount'+${charSubStat.count}" class="text-end">[[${charSub.getCount()}]]</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+</body>
+
+</html>

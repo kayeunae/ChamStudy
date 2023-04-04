@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<title>관리자페이지 - 회원관리</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="main">
+			<main class="content">
+				<div class="container-fluid p-0">
+					<h1 class="h3 mb-3">회원관리</h1>
+					<div class="card">
+						<div class="card-header pb-0">
+							<div class="card-actions float-end">
+								<div class="dropdown position-relative">
+								</div>
+							</div>
+							<h5 class="card-title mb-2">회원관리</h5>
+						</div>
+						
+						<div class="card-body">
+							<div id="datatables-orders_wrapper"
+								class="dataTables_wrapper dt-bootstrap5 no-footer">
+								<div class="row">
+									<div class="col-sm-12 col-md-6">
+										<div class="dataTables_length" id="datatables-orders_length">
+											<select name="datatables-orders_length"
+												aria-controls="datatables-orders"
+												class="form-select form-select-sm width30">
+												<option value="10">10</option>
+												<option value="25">25</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="col-sm-12 col-md-6">
+										<div id="datatables-orders_filter" class="dataTables_filter"
+											style="text-align: right">
+											<form th:action="@{/users/userList}" method="get"
+												role="search">
+
+												<label class="d-flex justify-content-end">
+													<input name="searchQuery" type="search"
+													class="form-control form-control-sm width30"
+													placeholder="이름 입력" aria-controls="Search">
+													<button class="btn btn-primary" style="margin-left: 20px;"
+														type="submit">Search</button>
+												</label>
+
+											</form>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<table id="datatables-orders"
+											class="table table-striped dataTable no-footer dtr-inline text-center"
+											aria-describedby="datatables-orders_info">
+											<thead>
+												<tr>
+												
+													<th class="sorting sorting_asc col-2" tabindex="0"
+														aria-controls="datatables-orders" rowspan="1" colspan="1">No.</th>
+														
+													<th class="sorting col-2" tabindex="0"
+														aria-controls="datatables-orders" rowspan="1" colspan="1">이름</th>
+														
+													<th class="sorting col-3" tabindex="0"
+														aria-controls="datatables-orders" rowspan="1" colspan="1">이메일</th>
+														
+													<th class="sorting col-2" tabindex="0"
+														aria-controls="datatables-orders" rowspan="1" colspan="1">가입일</th>
+														
+													<th class="sorting col-1" tabindex="0"
+														aria-controls="datatables-orders" rowspan="1" colspan="1">구분</th>
+														
+														
+													<th class="sorting_disabled col-2" rowspan="1" colspan="1"
+														style="width: 75px;text-align: center;">회원관리</th>
+													
+												</tr>
+											</thead>
+											
+											<tbody>
+												<tr th:if="${users.getTotalElements()==0}">
+													<td colspan="6" class="dtr-control sorting_1" tabindex="0"><strong>회원가입된 유저가 없습니다.</strong></td>
+												</tr>
+												<th:block th:each="user, status: ${users.getContent()}">
+													<tr class="odd">
+														<td class="dtr-control sorting_1" tabindex="0"><strong>[[${user.id}]]</strong></td>
+														<td>[[${user.name}]]</td>
+														<td>[[${user.email}]]</td>
+														<td>[[${user.regDate}]]</td>
+														<td>[[${user.gubun}]]</td>
+														<td style="text-align: center;" >
+														<button type="button" class="btn btn-primary"
+																data-bs-toggle="modal" th:data-bs-target="'#a' + ${user.id}">조회</button>
+														<button type="button" class="btn btn-primary"
+														data-bs-toggle="modal" th:onclick="delCheck([[${user.id}]])" >탈퇴</button>
+														</td>
+													</tr>
+													<!-- 조회 Modal -->
+													<div class="modal fade modalBox" th:id="'a'+${user.id}"
+														data-bs-backdrop="static" data-bs-keyboard="false"
+														tabindex="-1" aria-labelledby="staticBackdropLabel"
+														aria-hidden="true">
+														<div class="modal-dialog modal-lg modal-dialog-centered">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h1 class="modal-title fs-5" id="staticBackdropLabel">[[${user.name}]]
+																		회원님 정보</h1>
+																</div>
+																<div class="modal-body row">
+																	<div class="col-md-12">
+																		<div class="card mb-12 col-12">
+																			<div class="card-header ">
+																				<h5 class="card-title mb-0">Profile Details</h5>
+																			</div>
+																			<div class="card-body text-center">
+																				<div class="text-muted mb-2">이름</div>
+																				<h5 class="card-title mb-0">[[${user.name}]]</h5>
+																			</div>
+																			<hr class="my-0" />
+																			<form th:id="'frm' + ${user.id}" action="/users/update" method="post" th:oabject="${userListDto}">
+																			<div class="card-body">
+																				<h5 class="h6 card-title">Infomation</h5>
+																				<ul class="list-unstyled mb-0">
+																				
+																					<li style="display: block;" class="mb-1 view"><span data-feather="user" class="feather-sm me-1"></span> 
+																						 User ID : [[${user.id}]] </li>
+
+																					<li style="display: block;" class="mb-1 view"><span data-feather="mail" class="feather-sm me-1"></span> 
+																						 User Email : [[${user.email}]] </li>
+																					
+																					<li style="display: block;" class="mb-1 view"><span data-feather="phone" class="feather-sm me-1"></span> 
+																						 User Phone : [[${user.phone}]] </li>
+																						 
+																					<li style="display: block;" class="mb-1 view"><span data-feather="calendar" class="feather-sm me-1"></span> 
+																						가입일 : [[${user.regDate}]] </li>
+																					
+																					<li style="display: block;" class="mb-1 view"><span data-feather="at-sign" class="feather-sm me-1"></span> 
+																						로그인 형식(G = 구글, N = 일반) : [[${user.gubun}]] </li>
+																					
+																					
+																					<!-- 수정하는 영역 -->
+																					<li style="display: none;" class="mb-1 userId"><span data-feather="user" class="feather-sm me-1"></span> 
+																					User ID : 
+																					<input name="id" style="background-color: #dee2e6;" readonly="readonly" th:value="${user.id}" type="text" placeholder="유저 아이디"></li>
+																					
+																					
+																					<li style="display: none;" class="mb-1 userEmail"><span data-feather="mail" class="feather-sm me-1"></span> 
+																					User Email : 
+																					<input name="email" th:value="${user.email}" type="text" placeholder="유저 아이디"></li>
+																					
+																					
+																					<li style="display: none;" class="mb-1 userPhone"><span data-feather="phone" class="feather-sm me-1"></span> 
+																					User Phone : 
+																					<input name="phone" th:value="${user.phone}" type="text" placeholder="유저아이디"></li>
+																					
+																					
+																					<li style="display: none;" class="mb-1 userRegDate"><span data-feather="calendar" class="feather-sm me-1"></span> 
+																					가입일 : 
+																					<input name="regDate" style="background-color: #dee2e6;" readonly="readonly" th:value="${user.regDate}" type="text" placeholder="유저 아이디"></li>
+																					
+																					
+																					<li style="display: none;" class="mb-1 gubun"><span data-feather="at-sign" class="feather-sm me-1"></span> 
+																					로그인 형식(G = 구글, N = 일반) : 
+																					<input name="gubun" style="background-color: #dee2e6;" readonly="readonly" th:value="${user.gubun}" type="text" placeholder="유저 아이디">
+																					<input name="password" th:value="${user.password}" type="hidden">
+																					<input name="name" th:value="${user.name}" type="hidden">
+																					<input name="role" th:value="${user.role}" type="hidden">
+																					</li>
+																					<!-- 수정하는 영역 end -->
+																				</ul>
+																			</div>
+																			</form>
+																		</div>
+																	</div>
+
+
+
+																</div>
+																<div class="modal-footer">
+        															<button type="button" class="btn btn-primary modiBt" onclick="modi()">수정하기</button>
+        															<button style="display: none;" type="button" class="btn btn-primary closeBt" th:onclick="modiok([[${user.id}]])">수정완료</button>
+																	<button id="closeModalBtn" type="button" class="btn btn-secondary" onclick="close(); closeHide();" data-bs-dismiss="modal">닫기</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- 조회 Modal end -->
+												</th:block>
+												
+											</tbody>
+										</table>
+									</div>
+								</div>
+								
+								<div class="row" >
+								<div class="col-sm-12 col-md-3"> </div>
+									<div class="col-sm-12 col-md-6 ">
+									<nav th:with="start=${(users.number/maxPage)*maxPage + 1},
+									end=(${(users.totalPages == 0) ? 1 : (start + (maxPage -1) < users.totalPages ? start + (maxPage -1) : users.totalPages)})">
+										<div class="dataTables_paginate paging_simple_numbers block-27" id="datatables-orders_paginate">
+											<ul class="pagination">
+												<li th:classappend="${users.first}? 'disabled'"
+												class="paginate_button page-item previous disabled mx-1" id="datatables-orders_previous">
+													<a th:href="@{'/users/userList' + '?searchQuery=' + ${userSearchDto.searchQuery} + '&page=' + ${users.number-1}}"
+													 aria-controls="datatables-orders" data-dt-idx="0" tabindex="0" class="page-link">&lt </a>
+												</li>
+												<li th:each="page: ${#numbers.sequence(start, end)}"
+												th:classappend="${users.number eq page-1}?'active':''"
+												class="paginate_button page-item mx-1">
+													<a th:href="@{'/users/userList' + '?searchQuery=' + ${userSearchDto.searchQuery} + '&page=' + ${page-1}}"
+													 aria-controls="datatables-orders" data-dt-idx="1" tabindex="0" class="page-link">[[${page}]]</a>
+												</li>
+												<li th:classappend="${users.last}? 'disabled'"
+												class="paginate_button page-item next" id="datatables-orders_next  mx-1">
+													<a th:href="@{'/users/userList' + '?searchQuery=' + ${userSearchDto.searchQuery} + '&page=' + ${users.number+1}}"
+													 aria-controls="datatables-orders" data-dt-idx="3" tabindex="0" class="page-link">&gt</a>
+												</li>
+											</ul>
+										</div>
+									</nav>
+									</div>
+									<div class="col-sm-12 col-md-3 newbtnwrap">
+										<a class="btn btn-primary btn-sm newbtn" href="/users/signUpp">등록하기</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+    	
+	<script th:inline="javascript">
+	
+	function delCheck(value){
+		if(confirm('정말 삭제하시겠습니까?')){
+			location.href='/users/delete/'+value;
+		}
+	}
+	
+	function modi() {
+		$('.userEmail').css('display','block');
+		$('.userId').css('display','block');
+		$('.userPhone').css('display','block');
+		$('.userRegDate').css('display','block');
+		$('.gubun').css('display','block');
+		$('.view').css('display','none');
+		$('.closeBt').css('display','block');
+		$('.modiBt').css('display','none');
+	}
+	
+	//모달 닫기
+	
+	function closeHide() {
+		$('.userEmail').css('display','none');
+		$('.userId').css('display','none');
+		$('.userPhone').css('display','none');
+		$('.userRegDate').css('display','none');
+		$('.gubun').css('display','none');
+		$('.view').css('display','block');
+		$('.closeBt').css('display','none');
+		$('.modiBt').css('display','block');
+	}
+	
+	
+	function modiok(value) {
+		$('.userEmail').css('display','none');
+		$('.userId').css('display','none');
+		$('.userPhone').css('display','none');
+		$('.userRegDate').css('display','none');
+		$('.gubun').css('display','none');
+		$('.view').css('display','block');
+		$('#frm'+value).submit();
+	}
+	
+	//<button type="button" class="btn btn-secondary" onclick="close()" data-bs-dismiss="modal">닫기</button>
+/* 	function close() {
+		$('.userEmail').css('display','none');
+		$('.userId').css('display','none');
+		$('.userPhone').css('display','none');
+		$('.userRegDate').css('display','none');
+		$('.gubun').css('display','none');
+		$('.closeBt').css('display','none');
+	} */
+	
+	
+
+    </script>
+
+		
+	</div>
+
+</body>
+</html>

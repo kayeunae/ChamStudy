@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/layout_admin}">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="/img/icons/icon-48x48.png" />
+
+	<title>Blank Page | AdminKit Demo</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="main">
+			<main class="content">
+				<div class="container-fluid p-0">
+					<h1 class="h3 mb-3">카테고리 관리</h1>
+					<div class="card">
+						<div class="card-header pb-0">
+							
+							<h5 class="card-title mb-1">메인 카테고리</h5>
+						</div>
+						<div class="card-body">
+							<div id="datatables-orders_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+								<div class="row">
+									<div class="col-sm-12">
+										<table id="datatables-orders" class="table table-striped dataTable no-footer dtr-inline text-center" aria-describedby="datatables-orders_info" >
+											<colgroup>
+												<col width="10%"><col width="40%"><col width="10%"><col width="20%"><col width="10%">
+												<col width="10%">
+											</colgroup>
+											<thead>
+												<tr>
+													<th>아이디</th>
+													<th>메인 카테고리 이름</th>
+													<th>서브 <br /> 카테고리 수</th>
+													<th>등록일</th>
+													<th>수정</th>
+													<th>삭제</th>
+											</thead>
+											<tbody>
+												<th:block  th:each="cateList, status: ${mainList.getContent()}">
+												<tr th:if="${cateList.getId()!=null}">
+													<td class="dtr-control sorting_1" tabindex="0"><strong>[[${cateList.getId()}]]</strong></td>
+													<td><a th:href="'/adminCategory/sub/'+${cateList.getId()}">[[${cateList.getName()}]]</a></td>
+													<td>[[${cateList.getCount()}]]</td>
+													<td>[[${cateList.getDate().substring(0,13)}]]</td>
+													<td>
+														<button th:onclick="modifySet([[${cateList.getId()}]],[[${cateList.getName()}]])" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary btn-sm">수정</button>
+													</td>
+													<td>
+														<button th:onclick="delCheck([[${cateList.getId()}]],[[${cateList.getCount()}]])" type="button" class="btn btn-primary btn-sm">삭제</button>
+													</td>
+												</tr>
+												<tr th:if="${cateList.getId()==null}">
+													<td colspan="6" class="dtr-control sorting_1" tabindex="0"><strong>데이터가 없습니다.</strong></td>
+												</tr>
+												</th:block>
+												<th:block th:if="${mainList.getContent().size() == 0 }">
+												<tr>
+													<td colspan="6"><strong>등록된 카테고리가 없습니다.</strong></td>
+												</tr>
+												</th:block>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="row" >
+									<div class="col-sm-12 col-md-3">
+										<div class="dataTables_info" id="datatables-orders_info" role="status" aria-live="polite"></div>
+									</div>
+									
+									<div class="col-sm-12 col-md-6 ">
+										<div class="dataTables_paginate paging_simple_numbers block-27" id="datatables-orders_paginate"
+											th:with="start=${(mainList.number/maxPage)*maxPage + 1},
+													end=${(mainList.getTotalPages() == 0) ? 1 : (start + (maxPage - 1) < mainList.getTotalPages() ? start + (maxPage - 1) : mainList.getTotalPages())}"	>
+											<ul class="pagination">
+												<li class="paginate_button page-item previous disabled mx-1" id="datatables-orders_previous" th:classappend="${mainList.first}?'disabled'">
+													<a th:href="'/adminCategory/main?page='+${(mainList.number-1)}" aria-controls="datatables-orders" data-dt-idx="0" tabindex="0" class="page-link">&lt </a>
+												</li>
+												<th:block th:each="page: ${#numbers.sequence(start, end)}" >
+													<li th:classappend="${mainList.number eq page-1}?'active':''" class="paginate_button page-item mx-1" >
+														<a th:href="@{'/adminCategory/main?page=' + ${page-1}}" aria-controls="datatables-orders" data-dt-idx="1" tabindex="0" class="page-link">[[${page}]]</a>
+													</li>
+												</th:block>
+												<li class="paginate_button page-item next" id="datatables-orders_next  mx-1">
+													<a th:href="@{'/adminCategory/main?page=' + ${mainList.number+1}}" aria-controls="datatables-orders" data-dt-idx="3" tabindex="0" class="page-link">&gt</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<div class="col-sm-12 col-md-3 newbtnwrap">
+										<button onclick="newRest()" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary btn-sm newbtn">등록하기</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<form id="delFrm" action="/adminCategory/del">
+					<input type="hidden" id="delMainId" name="mainId" />
+				</form>
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="ModalLabel">메인카테고리 생성</h5>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				      	<form id="frm" action="/adminCategory/newResult" method="get">
+				      		<input type="hidden" id="mainId" name="mainId">
+				      		<div class="form-group">
+						    	<label for="cateName">카테고리 이름</label>
+						    	<input type="email" class="form-control" id="cateName" name="cateName" placeholder="카테고리 이름">
+						  	</div>
+				      	</form>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				        <button id="sbtBtn" onclick="frmsbt()" type="button" class="btn btn-primary">등록</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</main>
+		</div>
+		<script>
+			function frmsbt(){
+				$('#frm').submit();
+			}
+			
+			function modifySet(id,name){
+				$('#mainId').val(id);
+				$('#cateName').val(name);
+				$('#ModalLabel').text('메인카테고리 수정');
+				$('#frm').attr('action','/adminCategory/modifyResult');
+				$('#sbtBtn').text("수정");
+			}
+			
+			function newRest(){
+				$('#mainId').val('');
+				$('#cateName').val('');
+				$('#ModalLabel').text('메인카테고리 생성');
+				$('#frm').attr('action','/adminCategory/newResult');
+				$('#sbtBtn').text("등록");
+			}
+			
+			function delCheck(mainId,count){
+				
+				if(count>=1){
+					alert('해당 카테고리의 서브카테고리가 존재합니다.\n\n삭제 후 다시 시도해주세요.');
+					return false;
+				}
+				
+				if(confirm('삭제하시겠습니까?')){
+					$('#delMainId').val(mainId);
+					$('#delFrm').submit();
+				}else{ return false; }
+			}
+		</script>
+	</div>
+</body>
+</html>
