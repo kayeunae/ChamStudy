@@ -21,20 +21,33 @@
            				<i class="fa-solid fa-sliders"></i><span>메인페이지</span>
            			</a>
 				</li>
-				<!-- 로그인 테스트(김용수) -->
+				<!-- 로그인 -->
 				<li class="sidebar-item" sec:authorize="isAnonymous()">
 					<a class="sidebar-link" href="/users/signIn">
 		            	<i class="fa-solid fa-right-to-bracket"></i><span>로그인</span>
 		            </a>
 				</li>
+				
+				<!-- 회원관리 start -->
 				<li class="sidebar-header">회원관리</li>
 				<li class="sidebar-item" th:classappend="${active} == 'user' ? 'active'">
 					<a class="sidebar-link" href="/users/userList" >
 		            	<i class="fa-solid fa-people-roof"></i><span>회원 목록</span>
 		            </a>
 				</li>
-				<!-- 전은미 온라인강의 start -->
+				<!-- 회원관리 end -->
 				
+				<!-- 카테고리 관리 start -->
+				<li class="sidebar-header">카테고리 관리</li>
+				<li class="sidebar-item" th:classappend="${active} == 'category' ? 'active'">
+					<a class="sidebar-link" href="/adminCategory/main">
+						<i class="fa-solid fa-list-ul"></i>
+						<span>카테고리 목록</span>
+					</a>
+				</li>
+				<!-- 카테고리 관리 end -->
+				
+				<!-- 온라인강의 start -->
 				<li class="sidebar-header">클래스 관리</li>
 				<li class="sidebar-item" th:classappend="${active} == 'classInfo' ? 'active'">
 					<a class="sidebar-link" href="/adminClass/classList">
@@ -51,8 +64,9 @@
 						<i class="fa-regular fa-folder"></i><span>교육진행정보</span>
 					</a>
 				</li>
-				<!-- 전은미 온라인강의 end -->
-				<!-- 커뮤니티 게시판 관리  -->
+				<!-- 온라인강의 end -->
+				
+				<!-- 커뮤니티 게시판 관리 start -->
 				<li class="sidebar-header">커뮤니티 관리</li>
 				<li class="sidebar-item" th:classappend="${active} == 'comm' ? 'active'">
 					<a class="sidebar-link" href="/adminForm/comm">
@@ -61,7 +75,8 @@
 					</a>
 				</li>
 				<!-- 커뮤니티 게시판 관리 end -->
-				<!-- 고객센터 nav -->
+				
+				<!-- 고객센터 start -->
 				<li class="sidebar-header">고객센터 관리</li>
 				<li class="sidebar-item" th:classappend="${active} == 'csInform' ? 'active'">
 					<a class="sidebar-link" href="/adminCs/inform">
@@ -81,14 +96,7 @@
 						<span>1:1 문의</span>
 					</a>
 				</li>
-				<!-- 고객센터 nav end-->
-				<li class="sidebar-header">카테고리 관리</li>
-				<li class="sidebar-item" th:classappend="${active} == 'category' ? 'active'">
-					<a class="sidebar-link" href="/adminCategory/main">
-						<i class="fa-solid fa-list-ul"></i>
-						<span>카테고리 목록</span>
-					</a>
-				</li>
+				<!-- 고객센터 end-->
 			</ul>
 		</div>
 	</nav>
