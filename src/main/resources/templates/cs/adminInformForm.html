@@ -9,11 +9,18 @@
 <!-- 각 페이지에 script가 작성될 위치 -->
 <script th:inline="javascript">
 
+	$(function(){
+		$('#btn_cancel1').hide();
+		$('#btn_cancel2').hide();
+		$('#btn_cancel3').hide();
+	})
+
 	function changeDisplay(val){
 		if(val=='1') $('#btn_cancel1').show();
 		if(val=='2') $('#btn_cancel2').show();
 		if(val=='3') $('#btn_cancel3').show();
 	}
+	
 	$(function(){
 		$('#btn_cancel1').click(function(){
 			$('#formFile1').val('');

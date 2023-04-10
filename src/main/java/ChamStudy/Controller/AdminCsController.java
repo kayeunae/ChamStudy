@@ -95,7 +95,6 @@ public class AdminCsController {
 		model.addAttribute("csInformDto", new CsInformDto());
 		model.addAttribute("email",SecurityContextHolder.getContext().getAuthentication().getName());
 		model.addAttribute("fix5",fixoverfive);
-		System.out.println("작성자 아이디: " + SecurityContextHolder.getContext().getAuthentication().getName());
 		return "cs/adminInformForm";
 	}
 
