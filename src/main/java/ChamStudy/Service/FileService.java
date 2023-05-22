@@ -33,7 +33,7 @@ public class FileService {
 		
 		if(deleteFile.exists()) {	//해당 경로에 파일이 있으면 true 리턴
 			deleteFile.delete();	//파일 삭제
-			log.info("파일을 삭제하였습");
+			log.info("파일을 삭제하였습니다.");
 		} else {
 			
 		}
